@@ -85,7 +85,7 @@ This tutorial is divided into 7 parts:
     - Dependencies can be changed after object creation
         - Showing property-based injection and its risks
     - Used when dependencies are optional or need to be changed after object creation.
-    - MOTE => Dependencies might not be set at object creation time which may lead to potential null reference exception
+    - NOTE => Dependencies might not be set at object creation time which may lead to potential null reference exception
 - Part 4: Interface Injection (educational example in this tutorial repository)
     - Demonstrating dependency injection through interface-defined methods
     - Understanding contracts and abstractions
@@ -112,8 +112,7 @@ This tutorial is divided into 7 parts:
     - Repository pattern
     - Logging (ILogger<T>)
     - Configuration (IOptions<T>)
-    - Best practices
-    - Common DI mistakes
+    - Best practices and Common DI mistakes
     - Microsoft recommendations
     - Best Practices and Common Mistakes
 
@@ -194,6 +193,37 @@ To be added...
 ## Part 7:
 To be added...
 
+# Staring the ASP.NET Core Project
+We will now practice tha actual implementation of the "Dependency Injection" using ASP.NET Core. Notice that .NET provides 3 different primary types (templates) of ASP.NET Core project, and we see them commonly in Visual Studio:
+- **ASP.NET Core Web App (MVC)**:
+ Builds web applications using the **Model-View-Controller (MVC)** pattern. Best suited for applications with controllers, views, routing, and server-side rendering.
+- **ASP.NET Core Web App (Razor Pages)**:
+ Builds page-focused web applications using **Razor Pages**. Provides a simpler programming model for UI-centric applications where each page handles its own logic.
+- **ASP.NET Core Web API**:
+Builds **HTTP REST APIs** that return data (such as JSON) for browsers, mobile apps, desktop applications, or other services. It typically does not include server-rendered views.
+
+**Other Visual Studio Templates include:**
+- Blazor Web App: Builds interactive web applications using C# instead of JavaScript for much of the client-side logic.
+- ASP.NET Core Empty: Creates a minimal project with only the essential infrastructure.
+- ASP.NET Core gRPC Service: Builds high-performance RPC services using the gRPC protocol.
+- ASP.NET Core Worker Service: Builds long-running background services that don't expose a web UI.
+
+# Our ASP.NET Core (MVC) Project Structure:
+Our new project should look approximately like this:
+- AspNetCoreDIDemo:
+    - Controllers
+        - HomeController.cs
+    - Models
+           - ErrorViewModel.cs
+    - Views
+        - Home
+        - Shared
+    - wwwroot
+    - appsettings.json
+    ─ appsettings.Development.json
+    ─ Program.cs
+    ─ AspNetCoreDIDemo.csproj
+
 # Credits, References, and Resources:
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
 - [C# Classes](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/classes)
@@ -203,6 +233,9 @@ To be added...
 - [Dependency Injection in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection)
 - [Dependency Injection Guidelines](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines)
 - [ASP.NET Core DI Overview](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0)
+- [ASP.NET Core MVC - Overview of ASP.NET Core MVC](https://learn.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-11.0)
+- [ASP.NET Core Razor Pages -Introduction to Razor Pages in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/razor-pages/?view=aspnetcore-11.0&tabs=visual-studio)
+- [ASP.NET Core Web API - Create web APIs with ASP.NET Core ](https://learn.microsoft.com/en-us/aspnet/core/web-api/?view=aspnetcore-11.0)
 - My Other .NET Stack Repos:
    - .NET and C# Intro:
       - https://github.com/anmarjarjees/dotnet-csharp-intro
