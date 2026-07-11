@@ -224,6 +224,39 @@ Our new project should look approximately like this:
     ─ Program.cs
     ─ AspNetCoreDIDemo.csproj
 
+# Project Building and Coding Sequence:
+### Step#1:
+You can review the details comments and explanations in **Program.cs** file. 
+
+### Step2:
+Creating a new folder **"Services"** to store our services, and creating the interface file **"IMusicService.cs"**.
+We created the interface first so the consumer class (later, an ASP.NET Core Controller) will depend on an abstraction (interface), not directly on a concrete implementation class.
+
+    > Controller ==> IMusicService
+
+Notice that we are no longer using Musician in this ASP.NET Core project, instead, we are using a "Controller".
+
+The same principle is used in real ASP.NET Core applications.
+
+**For example:**
+- Instead of a Controller depending directly on the concrete class **MusicService**:
+    - Controller ==> MusicService
+- we make it depend on the abstraction:
+    - Controller ==> IMusicService
+
+**Then ASP.NET Core's built-in Dependency Injection container is responsible for providing the correct implementation.
+The final relationship will be:**
+    > Controller == depends on ==> IMusicService (Contract) == implemented by ==> MusicService (Actual Code)
+
+Then creating the **MusicService.cs** file that implements the interface.
+
+The final folder structure:
+```bash
+- Services
+    - IMusicService.cs (Contract / Abstraction)
+    - MusicService.cs (Concrete Implementation)
+```
+
 # Credits, References, and Resources:
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
 - [C# Classes](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/classes)
