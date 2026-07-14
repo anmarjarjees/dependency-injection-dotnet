@@ -28,6 +28,17 @@
      *  
      * And this happens in "Program.cs", in this code line:
      *  > builder.Services.AddTransient<IMusicService, MusicService>();
+     *  
+     * Notice that our class "MusicService" is stateless, why "stateless"?
+     * It has:
+     *  - no fields
+     *  - no properties
+     *  - no counters
+     *  - no stored data
+     *  
+     *  It just returns a string
+     *  Every new object behaves exactly the same
+     *  That's the definition of a "stateless" service 
      */
 
     /*
@@ -50,5 +61,5 @@
             return "Our Music service is working! Wow!";
         }
 
-    } // MusicService
+    } // class MusicService
 } // namespace

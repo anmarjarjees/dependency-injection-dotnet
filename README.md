@@ -257,6 +257,57 @@ The final folder structure:
     - MusicService.cs (Concrete Implementation)
 ```
 
+### Step3:
+- Modifying the "Program.cs" by adding one line which is the first real Dependency Injection line in ASP.NET Core:
+```C#
+builder.Services.AddTransient<IMusicService, MusicService>();
+```
+This line uses "builder.Services" because the Services property is an "IServiceCollection", which is the collection where framework services, application services, and third-party services are registered with the built-in ASP.NET Core Dependency Injection container.
+
+We followed this progression:
+```bash
+builder.Services (IServiceCollection): A collection of registration
+    => ASP.NET Core framework service registrations
+        => Logging service registrations
+            => Configuration service registrations
+                => Our custom service registrations
+```
+So our custom service is treated exactly like Microsoft's framework services.
+
+**NOTE:**
+The DI container does not treat our custom services differently. Once registered, our services can be injected in the same way as built-in ASP.NET Core services.
+
+By the end of this step, we have done three things:
+1. Created the contract (IMusicService)
+2. Created the implementation (MusicService)
+3. Registered it with the DI container
+
+But nothing is using it yet.
+
+### Step4:
+Creating a Controller because this project uses the ASP.NET Core MVC template. Instead of using the default controller "HomeController", we will use another dedicated controller because it makes our DI example more clear.
+
+Adding a new Controller:
+```bash
+    > Controllers/
+        > MusicController.cs
+```
+
+The controller is the consumer of our service.
+
+The dependency flow is now:
+```bash
+    > IMusicService (contract)
+        >> implemented by >>
+            > MusicService (implementation)
+                >> injected into >>
+                    MusicController (consumer)
+```
+
+Please review the code and the detailed comments in **"MusicController.cs"**
+
+---
+
 # Credits, References, and Resources:
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
 - [C# Classes](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/classes)

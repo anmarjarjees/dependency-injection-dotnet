@@ -1,3 +1,5 @@
+using AspNetCoreDIDemo.Services;
+
 namespace AspNetCoreDIDemo
 {
     public class Program
@@ -32,7 +34,7 @@ namespace AspNetCoreDIDemo
              * Notice again, when hovering over "Services",
              * Visual Studio will show IServiceCollection WebApplicationBuilder.Services definition
              * 
-             * The "Services" property => is of type "IServiceCollection"
+             * The "Services" property => has the type "IServiceCollection"
              * "IServiceCollection" => represents a collection of service registrations
              * 
              * In other words, "IServiceCollection" is a collection 
@@ -43,10 +45,10 @@ namespace AspNetCoreDIDemo
              * - Third-party services
              * 
              * IServiceCollection:
-             *  > Service Registration A
-             *  > Service Registration B
-             *  > Service Registration C
-             *  and so on...
+             *      > Registration A (IMusicService => MusicService)
+             *      > Registration B (ILogger => Logger)
+             *      > Registration C (Database service => Database implementation)
+             *      >  and so on...
              *  
              *  In this collection, we register services 
              *  that ASP.NET Core will create and provide when required
@@ -78,6 +80,110 @@ namespace AspNetCoreDIDemo
              *      > Please register all the required MVC services in the DI container
              *      
              *  Link: https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.mvcservicecollectionextensions.addcontrollerswithviews?view=aspnetcore-11.0
+             */
+
+
+            // Dependency Injection line in ASP.NET Core => Register our services:
+            builder.Services.AddTransient<IMusicService, MusicService>();
+            /*
+             * Service Registration:
+             * *********************
+             * In our application, "Services" folder, we have:
+             * 
+             *  > class MusicService == implements ==> Interface IMusicService 
+             *      
+             * So we need to tell ASP.NET Core:
+             * > Whenever a class requests the interface (contract) "IMusicService",
+             * > provide an instance of class "MusicService".
+             *
+             * This process is called "Service Registration"
+             * 
+             * Why Service Registration?
+             * *************************
+             * In case if a controller needs to use "IMusicService",
+             * ASP.NET Core will ask: Which class should I instantiate?
+             * 
+             * So, without a registration, ASP.NET will not have an answer!
+             * 
+             * ASP.NET Core doesn't know:
+             *  - Which implementation should it instantiate?
+             *  - Should it create MusicService?
+             *  - Should it create another implementation of IMusicService?
+             *  
+             * For this reason, we register a mapping between:
+             *      > IMusicService <==> MusicService
+             * which is exactly what DI registration is :-)    
+             * 
+             * To simplify the concept:
+             * *************************
+             * Reading this registration code line:
+             *      > builder.Services.AddTransient<IMusicService, MusicService>();
+             *  
+             * As: 
+             *      "Register the service (contract) "IMusicService" interface,
+             *          so that ASP.NET Core will provide a MusicService instance." :-)
+             *  
+             * "AddTransient" method:
+             * **********************
+             *  This one of the three registration methods in DI. 
+             *  
+             *  Microsoft provides three different methods for registering our services:
+             *  - AddTransient()
+             *  - AddScoped()
+             *  - AddSingleton()
+             *
+             * 
+             * Why AddTransient()?
+             * *******************
+             *
+             * "Transient" means:
+             *      > A NEW object (instance) is created every time the service is requested.
+             *
+             * Example:
+             *
+             * - Controller A
+             *      > requests "IMusicService" => New "MusicService" object
+             *
+             * - Controller B
+             *      > requests "IMusicService" => Another New "MusicService" object
+             * 
+             * - And so on...
+             * 
+             * In other words: "No object is shared between requests"
+             *
+             * This works well for lightweight, stateless services.
+             * 
+             * "Stateless" means the service does NOT remember information between different uses.
+             * 
+             * Each new instance starts with a fresh state.
+             * 
+             * In our example:
+             * Our class "MusicService" is stateless.
+             * Because MusicService simply returns a message
+             * It does not store user data, counters, or any other information.
+             * 
+             * Therefore, creating a new MusicService object each time is simple and inexpensive
+             * 
+             * Or simply in programming concept:
+             * "Stateless" means the object does not keep information from previous operations.
+             * Every new object starts fresh.
+             * 
+             * so AddTransient() => create a new instance when requested.
+             * 
+             * The other two Microsoft provided methods:
+             * *****************************************
+             * - AddScoped() => reuse one instance within the same request/scope.
+             *      > One instance per HTTP request
+             *
+             * - AddSingleton() => reuse one instance for the application's lifetime.
+             *      > One instance for the application's lifetime
+             *
+             * The idea of  "lifetimes" and all its detail will be covered in another part
+             * 
+             * Try to temporary use the other 2 methods for learning and demonstrating only
+             *
+             * Link:
+             * https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection
              */
 
             /*
@@ -115,9 +221,36 @@ namespace AspNetCoreDIDemo
 
             app.UseAuthorization();
 
+            // The default code => Default MVC route:
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            /*
+             * - {controller} => controller name without the Controller suffix
+             * - {action} => action (method) name
+             * - {id?} => optional parameter
+             * 
+             * Microsoft calls this conventional routing.
+             * 
+             * In the controller file:
+             * public class MusicController : Controller
+             *      {    
+             *          public IActionResult Index()
+             * 
+             * ASP.NET Core matches the URL endpoint /Music as:
+             * - controller = Music
+             * - action = Index
+             * 
+             * NOTE:
+             * *****
+             * We can change the controller value to "Music":
+             *      > {controller=Music}
+             * 
+             * so no need to explicitly add /Music:
+             *      . https://localhost:xxxx/Msuic
+             * 
+             * Link: https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/routing?
+             */
 
             app.Run();
         } // Main()
