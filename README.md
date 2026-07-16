@@ -369,6 +369,43 @@ builder.Services.AddTransient<IGuitarService, GuitarService>();
 
 After registration, ASP.NET Core can automatically provide both dependencies when creating **MusicController**.
 
+### Step6:
+Modify the **MusicController** to inject and use the second service (**IGuitarService**).
+
+The controller now depends on two services instead of one.
+
+```text
+                        ASP.NET Core DI Container
+                                    |
+                    <<==============================>>
+       IMusicService (Contract)             IGuitarService (Contract)         
+                |                                    |
+      MusicService (Implementation)     GuitarService (Implementation)
+                |                                    |
+                --------------------------------------
+                                   |    
+                            MusicController
+                                   |              
+                           Uses both services
+                                   |
+                        Returns an HTTP Response
+```
+
+At this stage, ASP.NET Core automatically resolves both dependencies through Constructor Dependency Injection.
+
+The controller does **not** create the service objects itself *(No new ...)*:
+```csharp
+new MusicService();
+new GuitarService();
+```
+Instead, the built-in DI container creates the required service objects and injects them into the controller constructor.
+
+Please review my code and comments in **MusicController.cs**.
+
+### Step7:
+The controller currently returns plain text using **`Content()`** to keep the Dependency Injection example simple and easy to verify.
+
+In the next step, we will complete the MVC flow by replacing the plain text response with an MVC **View**, allowing the controller to pass data to the presentation layer.
 
 ---
 

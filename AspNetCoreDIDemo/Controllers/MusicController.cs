@@ -34,29 +34,66 @@ namespace AspNetCoreDIDemo.Controllers
 
         private readonly IMusicService _musicService;
 
+        /*
+         * After adding a second service for guitars,
+         * we need to add another private field as we did with the "Music" service:
+         * 
+         * The field will be also private and readonly "_guitarService"
+         */
+        private readonly IGuitarService _guitarService;
+
+        /*
+         * A controller can depend on one service, two services, or many services.
+         *
+         * The ASP.NET Core DI container resolves every constructor parameter independently.
+         */
+
+        // The original constructor with one service "IMusicService":
+        /*
         public MusicController(IMusicService musicService)
         {
             _musicService = musicService;
+        }
+        */
+
+        // The newer constructor with more than one service:
+        // If the controller needs multiple services, list them all as constructor parameters.
+        public MusicController(IMusicService musicService, IGuitarService guitarService)
+        {
+            _musicService = musicService;
+            _guitarService = guitarService;
         }
 
         /*
          * Constructor Dependency Injection Explanation:
          * *********************************************
          *
-         * ASP.NET Core automatically calls the constructor:
-         *      > Controller(IMusicService musicService)
-         *  
-         * when creating the controller.
+         * ASP.NET Core automatically calls the controller constructor
+         * when it needs to create a MusicController object.
          *
-         * The "IMusicService" parameter is NOT created here.
+         * In our example, the constructor requires two services:
          *
-         * Instead, the built-in Dependency Injection container
-         * sees that this controller requires IMusicService,
-         * looks for its registration in Program.cs,
-         * creates a MusicService object,
-         * and passes it to this constructor.
+         *      > IMusicService
+         *      > IGuitarService
+         *      > etc... if we add in the future
          *
-         * We never write:
+         * The controller does NOT create these objects itself.
+         *
+         * Instead, the built-in Dependency Injection (DI) container:
+         *
+         * 1. Sees that MusicController requires:
+         *      - IMusicService
+         *      - IGuitarService
+         *
+         * 2. Looks for both registrations in Program.cs
+         *
+         * 3. Creates:
+         *      - MusicService
+         *      - GuitarService
+         *
+         * 4. Passes both objects to the constructor automatically.
+         *
+         * We never write for example:
          *
          *      > new MusicService();
          *
@@ -82,7 +119,7 @@ namespace AspNetCoreDIDemo.Controllers
          * Using the injected service:
          * ***************************
          * Remember that "MusicService" class has:
-         *      > GetMessage() method => returns a simple text message.
+         *      > GetMusicMessage() method => returns a simple text message.
          * 
          * We need to call this method in the current controller class.
          * Notice that I commented the default index() method for learning purposes,
@@ -91,18 +128,53 @@ namespace AspNetCoreDIDemo.Controllers
         public IActionResult Index()
         {
             /*
+             * The controller can call methods on any injected service.
+             * 
+             * Notice that each service has a different responsibility:
+             *      - IMusicService provides music-related functionality
+             *      - IGuitarService provides guitar-related functionality
+             *     
+             * The controller coordinates the work by calling both services 
+             * and combining their results.
+             *
              * The actual use of the injected service:
-             * - We call GetMessage() through the interface reference "_musicService"
+             * ***************************************
+             * - We call GetMusicMessage() through the interface reference "_musicService"
              * - The controller depends only on the IMusicService contract
              * - It doesn't need to know which concrete implementation
              * (such as MusicService) the DI container provides.
              */
 
-            var message = _musicService.GetMessage();
+            var musicMessage = _musicService.GetMusicMessage();
+
+            // After adding the Guitar service, using its method:
+            var guitarMessage = _guitarService.Play();
+
+            /*
+             * NOTE:
+             * *****
+             * After having more than one variable to retrieve a service message,
+             * We need to combine them into one to be returned later:
+             * 
+             * Since both services return strings, we can combine them into one response.
+             *
+             * we can use string interpolation "$"
+             * with newline "\n"
+             * 
+             * The '\n' escape sequence inserts a new line,
+             * so each message appears on a separate line.
+             *
+             * Output:
+             *      Our Music service is working! Wow!
+             *      Strumming Guitar Chords!
+             */
+            var output = $"{musicMessage} \n {guitarMessage}";
 
             // Returns plain text (HTTP response body) as a ContentResult,
             // which implements IActionResult:
-            return Content(message);
+
+            // Original return for one message:
+            // return Content(musicMessage);
             /*
              * Normally an MVC controller returns a View() as shown in the default index() method
              *
@@ -123,8 +195,8 @@ namespace AspNetCoreDIDemo.Controllers
              *      => Error: Cannot implicitly convert type 'string' to...
              * 
              * In other words:
-             * - message is a string
-             * - Content(message) creates a ContentResult object
+             * - musicMessage is a string
+             * - Content(musicMessage) creates a ContentResult object
              * - ContentResult object implements IActionResult
              * 
              * Link: https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.contentresult.content?
@@ -140,6 +212,8 @@ namespace AspNetCoreDIDemo.Controllers
              * - return NotFound(); // 404
              * - return BadRequest(); // 400
              */
+
+            return Content(output);
         } // Index()
 
         /*
@@ -170,7 +244,7 @@ namespace AspNetCoreDIDemo.Controllers
          *                  > DI finds: IMusicService => MusicService
          *                      > Creates MusicService
          *                          > Calls MusicController(IMusicService...)
-         *                              > _musicService.GetMessage()
+         *                              > _musicService.GetMusicMessage()
          *                                  > Returns the string to the browser
          */
 
