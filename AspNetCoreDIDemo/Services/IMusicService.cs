@@ -45,8 +45,8 @@ namespace AspNetCoreDIDemo.Services
      *  > IMusicServices = sounds like a collection of multiple services
      *  
      *  Examples of Microsoft interface naming:
-     *  - ILogger => Logger implementation
-     *  - IConfiguration => EmailService implementation
+     *  - ILogger<T>  => Logging implementation (Logging Contract)
+     *  - IConfiguration => Configuration implementation (Configuration Contract)
      *  - IProductService => ProductService implementation
      */
     public interface IMusicService
@@ -61,9 +61,9 @@ namespace AspNetCoreDIDemo.Services
          * must provide the actual implementation
          * of this method.
          */
-        string GetMessage();
+        string GetMusicMessage();
         /*
-         * GetMessage() is only a simple demonstration method
+         * GetMusicMessage() is only a simple demonstration method
          * that allows us to see the service being called through DI.
          * 
          * In a real-world example, this simple code (demo) can look like:
@@ -76,6 +76,58 @@ namespace AspNetCoreDIDemo.Services
          *     
          * IUserService
          *     GetUserById()
+         */
+
+        /*
+         * Interface members access modifiers:
+         * ***********************************
+         * Notice that we declared our method as:
+         *  > string GetMusicMessage();
+         * 
+         * Not as we do in a class:
+         *  > public string GetMusicMessage();
+         *  
+         * Historically, interface members were always public.
+         * Modern C# allows additional interface members (such as private helper methods),
+         * but the normal interface contract used for DI consists of public members.
+         * 
+         * Remember that an interface represents a contract 
+         * that other classes must be able to see and implement.
+         * 
+         * So => string GetMusicMessage();
+         * means => Any class that implements IMusicService 
+         *          must provide a public method called GetMusicMessage().
+         * 
+         * The compiler already knows this method is public.
+         * So adding/writing "public" explicitly is accepted (no problems),
+         * But Microsoft's examples usually omit it.
+         * 
+         * In normal C# interfaces:
+         * ************************
+         * - Public methods are the standard approach
+         * - Interface methods without an access modifier are public by default
+         * 
+         * NOTE:
+         * *****
+         * Modern C# also allows private interface members,
+         * but they are helper methods inside the interface
+         * and are not part of the contract implemented by classes.
+         * 
+         * Protected interface members are not allowed.
+         * 
+         * For Dependency Injection:
+         * *************************
+         * We usually keep interfaces simple and expose only the public contract needed by consumers.
+         * 
+         * To summarize:
+         * *************
+         * - Class members:
+         *      > If no access modifier is specified, class members are private by default
+         * - Interface members:
+         *      > Public contract members are normally declared without an access modifier
+         *      > Modern C# also supports private interface members for internal helper logic.
+         *      
+         * Link: https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/interface
          */
     } // interface
 } // namespace

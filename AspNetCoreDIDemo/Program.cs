@@ -1,4 +1,5 @@
 using AspNetCoreDIDemo.Services;
+using Microsoft.Win32;
 
 namespace AspNetCoreDIDemo
 {
@@ -184,6 +185,31 @@ namespace AspNetCoreDIDemo
              *
              * Link:
              * https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection
+             */
+
+            // Add second service and register multiple DI services:
+            builder.Services.AddTransient<IGuitarService, GuitarService>();
+            /*
+             * Registering multiple services:
+             * ******************************
+             * The DI container can manage many service registrations.
+             *
+             * In our example:
+             *      > IMusicService  => MusicService
+             *      > IGuitarService => GuitarService
+             *
+             * then a controller requests:
+             *
+             * public MusicController(
+             *      IMusicService musicService,
+             *      IGuitarService guitarService)
+             *
+             * ASP.NET Core will:
+             * 1) Look for IMusicService registration
+             * 2) Create MusicService
+             * 3) Look for IGuitarService registration
+             * 4) Create GuitarService
+             * 5) Pass both objects into the controller constructor
              */
 
             /*

@@ -285,7 +285,7 @@ By the end of this step, we have done three things:
 But nothing is using it yet.
 
 ### Step4:
-Creating a Controller because this project uses the ASP.NET Core MVC template. Instead of using the default controller "HomeController", we will use another dedicated controller because it makes our DI example more clear.
+CCreating a Controller because this project uses the ASP.NET Core Web App (MVC) template. Instead of using the default controller "HomeController", we will use another dedicated controller because it makes our DI example more clear.
 
 Adding a new Controller:
 ```bash
@@ -300,11 +300,75 @@ The dependency flow is now:
     > IMusicService (contract)
         >> implemented by >>
             > MusicService (implementation)
+                
+    > ASP.NET Core DI Container
+        >> injects "MusicService" into >>
+            > MusicController (consumer)
+                >> depends on
+                    > IMusicService
+```
+
+At this stage, our controller "MusicController" only depends on one service:
+    > MusicController == depends on ==> IMusicService == implemented by ==> MusicService
+
+In a real ASP.NET Core application, controllers often depend on multiple services (contracts), for example:
+- ILogger
+- IConfiguration
+- IProductService
+- IEmailService
+
+***Please review the code and the detailed comments in "MusicController.cs".**
+
+### Step5:
+For more practice and to simulate the idea of having multiple services that ASP.NET Core app can depend on as explained in "Step4", let's add another service (second service) to see how the DI container can resolve multiple dependencies automatically.
+
+```bash
+                        ASP.NET Core DI Container
+                                    |
+                    <<==============================>>
+       IMusicService (Contract)             IGuitarService (Contract)         
+                |                                    |
+      MusicService (Implementation)     GuitarService (Implementation)
+                |                                    |
+                --------------------------------------
+                                   |    
+                            MusicController              
+```
+Based on the above diagram, we can see that our controller "MusicController" depends on two services:
+- IMusicService (Implemented by MusicService)
+- IGuitarService (Implemented by GuitarService)
+
+In other words, The controller depends on the interfaces (contracts), not the concrete classes.
+
+So we will create a second contract (interface) that represents another service dependency. Then creating the contract and the implementation as we did before and as shown below:
+```bash
+    > IGuitarService (new contract)
+        >> implemented by >>
+            > GuitarService (new implementation)
                 >> injected into >>
                     MusicController (consumer)
 ```
+Notice that The purpose is not because we need a guitar service in a real application. The purpose is to demonstrate an important DI idea:
+**"A class can depend on multiple services, and ASP.NET Core DI can provide all of them automatically"**
 
-Please review the code and the detailed comments in **"MusicController.cs"**
+**Please review the code and the detailed comments in "IGuitarService.cs" and "GuitarService.cs" files.**
+
+**NOTE:**
+At this point, we have:
+    > IMusicService => MusicService
+However, the ASP.NET Core DI container does not know about this mapping until we register it in Program.cs:
+
+```C#
+builder.Services.AddTransient<IMusicService, MusicService>();
+```
+
+The same concept applies to our new guitar service:
+```C#
+builder.Services.AddTransient<IGuitarService, GuitarService>();
+```
+
+After registration, ASP.NET Core can automatically provide both dependencies when creating **MusicController**.
+
 
 ---
 
