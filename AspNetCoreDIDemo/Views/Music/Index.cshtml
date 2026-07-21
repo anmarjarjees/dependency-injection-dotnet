@@ -1,0 +1,68 @@
+﻿@* We removed the unnecessary  VS template content *@
+
+@* 
+Adding basic content as with the sample page index.cshtml 
+provided to us by default in the "Home"" folder:
+    Views/Home/Index.cshtml
+*@
+
+@{
+    ViewData["Title"] = "Music";
+}
+
+@* 
+  For learning purposes, this View starts with the same layout used by the default MVC template:
+    > Views/Home/Index.cshtml
+  We will gradually customize it throughout this repository.
+
+  Notice that the generated MVC template already uses Bootstrap for styling and responsive layout.
+  The CSS classes below (such as "text-center" and "display-4") come from Bootstrap.
+
+  So MVC template includes Bootstrap
+*@
+<div class="text-center">
+    <h1 class="display-4">Welcome to our music performance</h1>
+
+    <p>
+        Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.
+    </p>
+
+    <hr />
+    @* Adding more custom contents below: *@
+    <p>You can also review these projects (GitHub) repos:</p>
+    <div class="list-group">
+        <a href="https://github.com/anmarjarjees/dotnet-csharp-intro" class="list-group-item list-group-item-action" target="_blank">
+            .NET and C# Introduction
+        </a>
+        <a href="https://github.com/anmarjarjees/music-gear-tracker" class="list-group-item list-group-item-action" target="_blank">
+            ASP.NET Core MVC - Music Gear Tracker
+        </a>
+    </div>
+
+    <hr />
+    @*
+    Accessing data passed from the Controller:
+    ******************************************
+    In MusicController.cs we stored two values in ViewData:
+       > ViewData["MusicMessage"]
+       > ViewData["GuitarMessage"]
+
+    ViewData behaves like a dictionary:
+        > each value is stored using a key
+        > we retrieve it here using the same key
+*@
+    <h2>Dependency Injection Demo</h2>
+
+    <h3>Music Service</h3>
+
+    @* Using BootStrap alert boxes: *@
+    <div class="alert alert-success">
+        @ViewData["MusicMessage"]
+    </div>
+
+    <h3>Guitar Service</h3>
+
+    <div class="alert alert-info">
+        @ViewData["GuitarMessage"]
+    </div>
+</div>

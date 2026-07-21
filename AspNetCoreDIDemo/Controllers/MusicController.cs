@@ -38,7 +38,7 @@ namespace AspNetCoreDIDemo.Controllers
          * After adding a second service for guitars,
          * we need to add another private field as we did with the "Music" service:
          * 
-         * The field will be also private and readonly "_guitarService"
+         * The field will also be private and readonly: "_guitarService".
          */
         private readonly IGuitarService _guitarService;
 
@@ -75,7 +75,7 @@ namespace AspNetCoreDIDemo.Controllers
          *
          *      > IMusicService
          *      > IGuitarService
-         *      > etc... if we add in the future
+         *      > Additional services, if required in the future
          *
          * The controller does NOT create these objects itself.
          *
@@ -137,8 +137,8 @@ namespace AspNetCoreDIDemo.Controllers
              * The controller coordinates the work by calling both services 
              * and combining their results.
              *
-             * The actual use of the injected service:
-             * ***************************************
+             * Using the injected services:
+             * ****************************
              * - We call GetMusicMessage() through the interface reference "_musicService"
              * - The controller depends only on the IMusicService contract
              * - It doesn't need to know which concrete implementation
@@ -147,32 +147,11 @@ namespace AspNetCoreDIDemo.Controllers
 
             var musicMessage = _musicService.GetMusicMessage();
 
-            // After adding the Guitar service, using its method:
-            var guitarMessage = _guitarService.Play();
-
-            /*
-             * NOTE:
-             * *****
-             * After having more than one variable to retrieve a service message,
-             * We need to combine them into one to be returned later:
-             * 
-             * Since both services return strings, we can combine them into one response.
-             *
-             * we can use string interpolation "$"
-             * with newline "\n"
-             * 
-             * The '\n' escape sequence inserts a new line,
-             * so each message appears on a separate line.
-             *
-             * Output:
-             *      Our Music service is working! Wow!
-             *      Strumming Guitar Chords!
-             */
-            var output = $"{musicMessage} \n {guitarMessage}";
-
             // Returns plain text (HTTP response body) as a ContentResult,
             // which implements IActionResult:
 
+            // Return Example#1:
+            // *****************
             // Original return for one message:
             // return Content(musicMessage);
             /*
@@ -213,7 +192,60 @@ namespace AspNetCoreDIDemo.Controllers
              * - return BadRequest(); // 400
              */
 
-            return Content(output);
+            // After adding the Guitar service, using its method:
+            var guitarMessage = _guitarService.Play();
+
+            /*
+             * NOTE:
+             * *****
+             * After having more than one variable to retrieve a service message,
+             * We need to combine them into one to be returned later:
+             * 
+             * Since both services return strings, we can combine them into one response.
+             *
+             * we can use string interpolation "$"
+             * with newline "\n"
+             * 
+             * The '\n' escape sequence inserts a new line,
+             * so each message appears on a separate line.
+             *
+             * Output:
+             *      Our Music service is working! Wow!
+             *      Strumming Guitar Chords!
+             */
+            var output = $"{musicMessage}\n{guitarMessage}";
+
+            // the previous return for the two merged messages:
+            // return Content(output);
+
+            // Return Example#2:
+            // *****************
+            // return a simple view without passing any data:
+            // return View();
+
+            /*
+             * Passing data from the Controller to the View:
+             * *********************************************
+             * To pass data we use "ViewData":
+             * - "ViewData" is a dictionary provided by the Controller base class
+             * - "ViewData" allows the controller to send small pieces of data
+             * to the View using a string key
+             *
+             * Think of ViewData as Dictionary Data Structure (Key => Value):
+             * - The Key "MusicMessage" has the Value of "Our Music service is working! Wow!"
+             * - The Key "GuitarMessage" has the Value of "Strumming Guitar Chords!"
+             * 
+             * The Razor View retrieves these values using the same keys :-)
+             */
+
+
+
+            // Return Example#3: Adding Data to ViewData first
+            // *****************
+            ViewData["MusicMessage"] = musicMessage;
+            ViewData["GuitarMessage"] = guitarMessage;
+
+            return View();
         } // Index()
 
         /*
@@ -236,7 +268,10 @@ namespace AspNetCoreDIDemo.Controllers
          * - HomeController => URL Endpoint: /Home
          * - SchoolController => URL Endpoint: /School
          * 
+         * At the beginning of this repository:
+         * ************************************
          * ASP.NET Core will do the following automatically:
+         * 
          * > HTTP Request
          *      > MusicController needed
          *          > Controller requires IMusicService
@@ -246,6 +281,28 @@ namespace AspNetCoreDIDemo.Controllers
          *                          > Calls MusicController(IMusicService...)
          *                              > _musicService.GetMusicMessage()
          *                                  > Returns the string to the browser
+         *                                  
+         * After adding a second service, a View, and passing data using ViewData:
+         * ***********************************************************************
+         * ASP.NET Core now performs the following steps:
+         * 
+         * * > HTTP Request
+         *      > MusicController needed
+         *          > DI Container checks the constructor
+         *              > Needs:
+         *                  > IMusicService
+         *                  > IGuitarService
+         *              > Creates:
+         *                  > MusicService
+         *                  > GuitarService
+         *              > Calls MusicController(...)
+         *                  > Controller:
+         *                      > Executes Index()
+         *                      > Calls both services
+         *                      > Stores the results in ViewData
+         *                      > Returns View()
+         *                          > Razor View reads ViewData
+         *                              > HTML page returned to the browser
          */
 
     } // class

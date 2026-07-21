@@ -403,10 +403,90 @@ Instead, the built-in DI container creates the required service objects and inje
 Please review my code and comments in **MusicController.cs**.
 
 ### Step7:
-The controller currently returns plain text using **`Content()`** to keep the Dependency Injection example simple and easy to verify.
+The controller currently returns plain text using **Content()** to keep the Dependency Injection example simple and easy to understand. This allows us to verify that the injected services are working correctly before introducing Views.
 
 In the next step, we will complete the MVC flow by replacing the plain text response with an MVC **View**, allowing the controller to pass data to the presentation layer.
 
+We will now change the application to follow the normal MVC pattern by returning a View instead of plain text.
+```bash
+    > Browser Request
+        > MusicController
+            > Calls Services (IMusicService + IGuitarService)
+                > Pass data to the View
+                    > Views/Music/Index.cshtml
+                        > Generates HTML
+                            > Browser
+```
+
+A new ASP.NET Core MVC project includes a default Views/Home folder. In this project, we will create our own Views/Music folder because our controller is MusicController.
+
+By convention, MVC uses this:
+    > Views ==> ControllerName ==> ActionName.cshtml
+
+Our controller is **"public class MusicController : Controller"**, so we remove the suffix **"Controller"** and just keep the "Music" as the name for our folder. 
+
+Now we need to modify the controller file "MusicController.cs" by updating the action method:
+```C#
+public IActionResult Index()
+```
+
+Remember that this action method original (initial built) used to return one text message:
+```C#
+return Content(musicMessage);
+```
+
+After adding a second service, we combined both messages  for both services "Music" and "Guitar" into a single text response:
+```C#
+var output = $"{musicMessage} \n {guitarMessage}";
+return Content(output);
+```
+
+Now we will modify it return a view. By convention, ASP.NET Core will automatically look for:
+```bash
+    Views\Music\Index.cshtml
+```
+
+We then create a new Razor View named Index.cshtml, add some basic content, and update it to display the data received from the controller. Please review the code and comments in that file. Also we can test our application to see the view page "index.cshtml" is loading.
+
+Now since we have the following two services in our controller:
+```C#
+var musicMessage = _musicService.GetMusicMessage();
+var guitarMessage = _guitarService.Play();
+```
+
+We can now send these two values to the View to learn one of the ways a controller passes data to the presentation layer.
+
+In order to pass data to a View, ASP.NET Core MVC provides several ways:
+- ViewData
+- ViewBag
+- Strongly Typed View Models (recommended by Microsoft for real applications)
+
+In order to order to clearly understand the why "ViewModels" exist, we can demonstrate the three of them in our current project (repo) according to the following order:
+1. ViewData (very simple, built into MVC)
+2. ViewBag (shows another common approach)
+3. Strongly Typed ViewModel (the professional approach used in production)
+
+Our final return code line in the controller was:
+```C#
+return View();
+```
+
+We will replace it with:
+```C#
+ViewData["MusicMessage"] = musicMessage;
+ViewData["GuitarMessage"] = guitarMessage;
+
+return View();
+```
+
+**Consider the following:**
+- The controller does not generate HTML
+- The controller prepares the data
+- The View is responsible for generating the HTML displayed in the browser
+
+
+
+---
 ---
 
 # Credits, References, and Resources:
