@@ -271,7 +271,8 @@ namespace AspNetCoreDIDemo
              * *****
              * We can change the controller value to "Music":
              *      > {controller=Music}
-             * 
+             * Instead of the default template value:
+             *      > {controller=Home}
              * so no need to explicitly add /Music:
              *      . https://localhost:xxxx/Msuic
              * 

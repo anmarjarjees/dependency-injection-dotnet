@@ -4,7 +4,7 @@ A beginner-friendly guide to Dependency Injection (DI) in C# and ASP.NET Core us
 ---
 
 ## What is Dependency Injection?
-Dependency Injection (DI) is a software design pattern where an object does not create its own dependencies. Instead, those dependencies are provided (or "injected") from the outside. So we can think about DI as a collection of necessary tools and services that a class needs to perform its tasks.
+Dependency Injection (DI) is a software design pattern where an object does not create its own dependencies. Instead, those dependencies are provided (or "injected") from the outside. So we can think of a dependency as a tool or service that a class needs to perform its tasks. Dependency Injection is the process of providing those dependencies from the outside.
 
 **This helps make code:**
 - easier to test
@@ -40,7 +40,7 @@ We will follow a structured learning path:
 - What a "dependency" actually means in software development
 - Why Dependency Injection exists and what problems it solves
 - Constructor Dependency Injection (the recommended approach for required dependencies in .NET)
-- Setter (Property) Dependency Injection and when it is used
+- Setter (Property) Dependency Injection and its limited use cases
 - Interface-based Dependency Injection and why interfaces are important
 - How ASP.NET Core uses built-in Dependency Injection internally
 - How to write clean, testable, and maintainable code using DI
@@ -62,7 +62,7 @@ This repository follows key Dependency Injection guidelines recommended by Micro
 - Program to abstractions (interfaces) instead of concrete implementations whenever practical
 - Register services in the DI container with appropriate lifetimes
 
-> Note: Advanced topics like service lifetimes, scopes, and disposal behavior will be introduced in future learning stages.
+> Note: More advanced topics such as service lifetimes in depth, scopes, and disposal behavior will be explored in future learning stages.
 
 ## Application Parts/Folders Topics
 This tutorial is divided into 7 parts:
@@ -81,19 +81,18 @@ This tutorial is divided into 7 parts:
     - NOTE => Constructor injection makes dependencies available when the object is created, which is ideal for required dependencies. Changing them later usually requires creating a new object. 
 - Part 3: Setter (Property) Injection (less common in .NET)
     - Dependencies are provided through properties/setters instead of constructor parameters
-        - Tools provided through properties/setters!
     - Dependencies can be changed after object creation
         - Showing property-based injection and its risks
     - Used when dependencies are optional or need to be changed after object creation.
-    - NOTE => Dependencies might not be set at object creation time which may lead to potential null reference exception
-- Part 4: Interface Injection (educational example in this tutorial repository)
+    - NOTE => Dependencies might not be set at object creation time which may lead to potential **"NullReferenceException"**
+- Part 4: Interface-Based Dependency Injection (Educational Example)
     - Demonstrating dependency injection through interface-defined methods
     - Understanding contracts and abstractions
     - Comparing it with constructor injection
     - Providing dependencies through an interface
         - Interface will be implemented by the consumer class "Musician"
         - Interface will define the methods
-    - A clear contract for DI though interfaces
+    - A clear contract for DI through interfaces
     - NOTE: => Requires additional interfaces to be defined for setting the dependencies
 - Part 5: ASP.NET Core Built-in Dependency Injection
     - IServiceCollection service registration
@@ -102,13 +101,13 @@ This tutorial is divided into 7 parts:
         - AddScoped
         - AddSingleton
     - Constructor Injection managed by the ASP.NET Core DI container
-- Part 6: Service Lifetimes
+- Part 6: Service Lifetimes (future section)
     - Transient
     - Scoped
     - Singleton
     - Visual demonstrations
     - Common lifetime mistakes
-- Part 7: Real-World Example
+- Part 7: Real-World Example (future section)
     - Repository pattern
     - Logging (ILogger<T>)
     - Configuration (IOptions<T>)
@@ -120,7 +119,7 @@ This tutorial is divided into 7 parts:
 Dependency Injection is a design pattern, not a framework.
 .NET and ASP.NET Core provide built-in support for implementing this pattern through their dependency injection container.**
 
-# Project and Folder Structure:
+# Project (Repository) Structure:
 - Folder (Main Container/The repo name): **"dependency-injection-dotnet"** 
     - Project => DependencyInjectionDemo
         - Program.cs => the entrypoint to our application + demo for running all parts (1,2,3, and 4)
@@ -137,9 +136,15 @@ Dependency Injection is a design pattern, not a framework.
     - Project => AspNetCoreDIDemo (covering Part 5,6, and 7)
         - Controllers
         - Services
-        - Interfaces
+            - IMusicService.cs
+            - MusicService.cs
+            - IGuitarService.cs
+            - GuitarService.cs
+        - *Interfaces => is optional (not used in this repo) if we want to place interface files here*
+        - Views
+            - Music
+                - Index.cshtml
         - Program.cs
-
 ---
 
 ## Program.cs Usage
@@ -157,15 +162,15 @@ var musician2 = new DependencyInjectionDemo.Part2.Musician();
 musician.Perform();
 ```
 
-*Continue in the same way for the remaining parts. Each part demonstrates a different Dependency Injection technique while reusing the same example application.*
+*Continue in the same way for the remaining parts. Each part demonstrates the evolution from tightly coupled dependencies toward different Dependency Injection approaches, ending with ASP.NET Core's built-in Dependency Injection container.*
 
 ---
 
 # Project Part Folders Explained:
-## Part 1: Bad design (Musician creates dependencies) **(tight coupling)** 
+## Part 1: Understanding dependencies (Musician creates dependencies) **(tight coupling)**
 The **Musician** class is doing this:
 - creating Guitar
--creating Amplifier
+- creating Amplifier
 - creating Mic
 
 **So the rule is: The class is responsible for both doing work and creating its tools**
@@ -181,32 +186,44 @@ The Musician receives dependencies after object creation through public properti
 It also demonstrates why constructor injection is usually preferred for required dependencies.
 
 ## Part 4: Interface Injection
-This part demonstrates dependency injection through interface-defined methods.
-This helps explain abstraction and contracts, although it is less common in modern .NET applications.
+This part demonstrates an educational example of dependency injection through interface-defined methods.
+It helps explain abstraction and contracts, although it is less common in modern .NET applications where constructor injection with interfaces is the preferred approach.
 
-## Part 5:
-To be added...
+## Part 5: ASP.NET Core Built-in Dependency Injection
+This part demonstrates how ASP.NET Core manages dependencies using its built-in DI container.
 
-## Part 6:
-To be added...
+Topics:
+- IServiceCollection
+- Service registration
+- Constructor injection managed by ASP.NET Core
+- Multiple service dependencies
+- MVC Controller injection
 
-## Part 7:
-To be added...
+## Part 6: Service Lifetimes (Future)
+Planned topics:
+- AddTransient
+- AddScoped
+- AddSingleton
+- Scope behavior
+- Disposal
 
-# Staring the ASP.NET Core Project
-We will now practice tha actual implementation of the "Dependency Injection" using ASP.NET Core. Notice that .NET provides 3 different primary types (templates) of ASP.NET Core project, and we see them commonly in Visual Studio:
+## Part 7: Real-World DI Examples (Future)
+Planned topics:
+- Repository pattern
+- ILogger<T>
+- Configuration
+- Options pattern
+- Testing
+
+# Starting the ASP.NET Core Project
+We will now practice tha actual implementation of the "Dependency Injection" using ASP.NET Core. 
+ASP.NET Core provides several project templates. The following are some of the most common templates used in Visual Studio:
 - **ASP.NET Core Web App (MVC)**:
  Builds web applications using the **Model-View-Controller (MVC)** pattern. Best suited for applications with controllers, views, routing, and server-side rendering.
 - **ASP.NET Core Web App (Razor Pages)**:
- Builds page-focused web applications using **Razor Pages**. Provides a simpler programming model for UI-centric applications where each page handles its own logic.
+ Builds page-focused web applications using **Razor Pages**. Provides a page-focused programming model where each Razor Page contains its UI and associated page logic.
 - **ASP.NET Core Web API**:
-Builds **HTTP REST APIs** that return data (such as JSON) for browsers, mobile apps, desktop applications, or other services. It typically does not include server-rendered views.
-
-**Other Visual Studio Templates include:**
-- Blazor Web App: Builds interactive web applications using C# instead of JavaScript for much of the client-side logic.
-- ASP.NET Core Empty: Creates a minimal project with only the essential infrastructure.
-- ASP.NET Core gRPC Service: Builds high-performance RPC services using the gRPC protocol.
-- ASP.NET Core Worker Service: Builds long-running background services that don't expose a web UI.
+Builds **HTTP REST APIs** that return data (such as JSON) for browsers, mobile apps, desktop applications, or other services. Builds HTTP APIs that return data (commonly JSON) for clients such as browsers, mobile apps, desktop applications, or other services.
 
 # Our ASP.NET Core (MVC) Project Structure:
 Our new project should look approximately like this:
@@ -214,23 +231,24 @@ Our new project should look approximately like this:
     - Controllers
         - HomeController.cs
     - Models
-           - ErrorViewModel.cs
+        - ErrorViewModel.cs
     - Views
         - Home
         - Shared
     - wwwroot
     - appsettings.json
-    ─ appsettings.Development.json
-    ─ Program.cs
-    ─ AspNetCoreDIDemo.csproj
+    - appsettings.Development.json
+    - Program.cs
+    - AspNetCoreDIDemo.csproj
+
+> Note: The exact files and folders may vary depending on the .NET version and selected options when creating the project.
 
 # Project Building and Coding Sequence:
-### Step#1:
+### Step1:
 You can review the details comments and explanations in **Program.cs** file. 
 
 ### Step2:
-Creating a new folder **"Services"** to store our services, and creating the interface file **"IMusicService.cs"**.
-We created the interface first so the consumer class (later, an ASP.NET Core Controller) will depend on an abstraction (interface), not directly on a concrete implementation class.
+Creating a new folder **"Services"** to store our application services. Then creating the interface file **"IMusicService.cs"**. We create the interface first because the consumer class (later, an ASP.NET Core Controller) should depend on an abstraction (interface), not directly on a concrete implementation.
 
     > Controller ==> IMusicService
 
@@ -246,9 +264,13 @@ The same principle is used in real ASP.NET Core applications.
 
 **Then ASP.NET Core's built-in Dependency Injection container is responsible for providing the correct implementation.
 The final relationship will be:**
-    > Controller == depends on ==> IMusicService (Contract) == implemented by ==> MusicService (Actual Code)
+```text
+    Controller == depends on ==> IMusicService (Contract)
+                             ==> implemented by ==> MusicService (Implementation)
+```
 
-Then creating the **MusicService.cs** file that implements the interface.
+At this stage, we have created the abstraction and its implementation. The service is not managed by ASP.NET Core DI yet.
+The DI registration step will happen later in Program.cs.
 
 The final folder structure:
 ```bash
@@ -262,30 +284,34 @@ The final folder structure:
 ```C#
 builder.Services.AddTransient<IMusicService, MusicService>();
 ```
-This line uses "builder.Services" because the Services property is an "IServiceCollection", which is the collection where framework services, application services, and third-party services are registered with the built-in ASP.NET Core Dependency Injection container.
+This line uses "builder.Services" because the Services property is an "IServiceCollection", which is the collection where framework services, application services, and third-party services are registered for the built-in ASP.NET Core Dependency Injection container.
 
 We followed this progression:
 ```bash
-builder.Services (IServiceCollection): A collection of registration
+builder.Services (IServiceCollection): A collection of service registrations
     => ASP.NET Core framework service registrations
-        => Logging service registrations
-            => Configuration service registrations
-                => Our custom service registrations
+    => Logging service registrations
+    => Configuration service registrations
+    => Our custom service registrations
 ```
 So our custom service is treated exactly like Microsoft's framework services.
 
 **NOTE:**
 The DI container does not treat our custom services differently. Once registered, our services can be injected in the same way as built-in ASP.NET Core services.
 
-By the end of this step, we have done three things:
+By this stage, we have completed three things:
+
 1. Created the contract (IMusicService)
 2. Created the implementation (MusicService)
-3. Registered it with the DI container
+3. Registered the service mapping with the DI container
+
+The registration tells ASP.NET Core:
+    > IMusicService => MusicService
 
 But nothing is using it yet.
 
 ### Step4:
-CCreating a Controller because this project uses the ASP.NET Core Web App (MVC) template. Instead of using the default controller "HomeController", we will use another dedicated controller because it makes our DI example more clear.
+Creating a Controller because this project uses the ASP.NET Core Web App (MVC) template. Instead of using the default controller "HomeController", we will use another dedicated controller because it makes our DI example more clear.
 
 Adding a new Controller:
 ```bash
@@ -302,25 +328,27 @@ The dependency flow is now:
             > MusicService (implementation)
                 
     > ASP.NET Core DI Container
-        >> injects "MusicService" into >>
-            > MusicController (consumer)
-                >> depends on
-                    > IMusicService
+        >> resolves IMusicService
+            >> creates MusicService
+                >> injects it into >> MusicController (consumer)
+                    >> depends on IMusicService
 ```
 
 At this stage, our controller "MusicController" only depends on one service:
     > MusicController == depends on ==> IMusicService == implemented by ==> MusicService
 
-In a real ASP.NET Core application, controllers often depend on multiple services (contracts), for example:
-- ILogger
-- IConfiguration
-- IProductService
-- IEmailService
+In real ASP.NET Core applications, controllers often depend on multiple services, for example:
+- Framework services:
+    - ILogger<T>
+    - IConfiguration
+- Application services:
+    - IProductService
+    - IEmailService
 
-***Please review the code and the detailed comments in "MusicController.cs".**
+**Please review the code and the detailed comments in "MusicController.cs".**
 
 ### Step5:
-For more practice and to simulate the idea of having multiple services that ASP.NET Core app can depend on as explained in "Step4", let's add another service (second service) to see how the DI container can resolve multiple dependencies automatically.
+For more practice, and to demonstrate the idea from Step 4 that an ASP.NET Core application can depend on multiple services, let's add a second service and see how the DI container resolves multiple dependencies automatically.
 
 ```bash
                         ASP.NET Core DI Container
@@ -328,17 +356,23 @@ For more practice and to simulate the idea of having multiple services that ASP.
                     <<==============================>>
        IMusicService (Contract)             IGuitarService (Contract)         
                 |                                    |
+                | implemented by                     | implemented by
       MusicService (Implementation)     GuitarService (Implementation)
                 |                                    |
                 --------------------------------------
                                    |    
-                            MusicController              
+                                   |
+                            MusicController (Consumer)              
+                                   |
+                                   | depends on:
+                                    - IMusicService
+                                    - IGuitarService
 ```
-Based on the above diagram, we can see that our controller "MusicController" depends on two services:
+Based on the above diagram, we can see that our controller "MusicController" depends on two service abstractions (interfaces):
 - IMusicService (Implemented by MusicService)
 - IGuitarService (Implemented by GuitarService)
 
-In other words, The controller depends on the interfaces (contracts), not the concrete classes.
+The controller will depend on these new abstractions **"interfaces (contracts)"**, not directly on GuitarService.
 
 So we will create a second contract (interface) that represents another service dependency. Then creating the contract and the implementation as we did before and as shown below:
 ```bash
@@ -348,15 +382,15 @@ So we will create a second contract (interface) that represents another service 
                 >> injected into >>
                     MusicController (consumer)
 ```
-Notice that The purpose is not because we need a guitar service in a real application. The purpose is to demonstrate an important DI idea:
+Notice that the purpose is not to create a realistic guitar service. The purpose is to demonstrate an important DI concept:
 **"A class can depend on multiple services, and ASP.NET Core DI can provide all of them automatically"**
 
 **Please review the code and the detailed comments in "IGuitarService.cs" and "GuitarService.cs" files.**
 
 **NOTE:**
-At this point, we have:
+At this point, we have the service mapping:
     > IMusicService => MusicService
-However, the ASP.NET Core DI container does not know about this mapping until we register it in Program.cs:
+However, the ASP.NET Core DI container does not know about this relationship until we register it in Program.cs:
 
 ```C#
 builder.Services.AddTransient<IMusicService, MusicService>();
@@ -370,25 +404,33 @@ builder.Services.AddTransient<IGuitarService, GuitarService>();
 After registration, ASP.NET Core can automatically provide both dependencies when creating **MusicController**.
 
 ### Step6:
-Modify the **MusicController** to inject and use the second service (**IGuitarService**).
+Modify the **MusicController** to inject and use the second service abstraction (**IGuitarService**).
 
-The controller now depends on two services instead of one.
+The controller now depends on two service abstractions instead of one:
+- IMusicService
+- IGuitarService
 
-```text
+```bash
                         ASP.NET Core DI Container
                                     |
                     <<==============================>>
        IMusicService (Contract)             IGuitarService (Contract)         
                 |                                    |
+                | implemented by                     | implemented by
+                |                                    |
       MusicService (Implementation)     GuitarService (Implementation)
                 |                                    |
                 --------------------------------------
                                    |    
-                            MusicController
-                                   |              
-                           Uses both services
                                    |
-                        Returns an HTTP Response
+                            MusicController (Consumer)              
+                                   |
+                                   | Injects:
+                                    - IMusicService
+                                    - IGuitarService
+                                    |
+                                    | Returns:
+                                    - HTTP Response
 ```
 
 At this stage, ASP.NET Core automatically resolves both dependencies through Constructor Dependency Injection.
@@ -400,7 +442,7 @@ new GuitarService();
 ```
 Instead, the built-in DI container creates the required service objects and injects them into the controller constructor.
 
-Please review my code and comments in **MusicController.cs**.
+Please review the implementation and detailed comments in **MusicController.cs**.
 
 ### Step7:
 The controller currently returns plain text using **Content()** to keep the Dependency Injection example simple and easy to understand. This allows us to verify that the injected services are working correctly before introducing Views.
@@ -414,7 +456,7 @@ We will now change the application to follow the normal MVC pattern by returning
             > Calls Services (IMusicService + IGuitarService)
                 > Pass data to the View
                     > Views/Music/Index.cshtml
-                        > Generates HTML
+                        > Razor View Engine generates HTML
                             > Browser
 ```
 
@@ -423,7 +465,7 @@ A new ASP.NET Core MVC project includes a default Views/Home folder. In this pro
 By convention, MVC uses this:
     > Views ==> ControllerName ==> ActionName.cshtml
 
-Our controller is **"public class MusicController : Controller"**, so we remove the suffix **"Controller"** and just keep the "Music" as the name for our folder. 
+Our controller is **"public class MusicController : Controller"**, so we remove the suffix **"Controller"** and keep only **"Music"** as the folder name.. 
 
 Now we need to modify the controller file "MusicController.cs" by updating the action method:
 ```C#
@@ -435,16 +477,17 @@ Remember that this action method original (initial built) used to return one tex
 return Content(musicMessage);
 ```
 
-After adding a second service, we combined both messages  for both services "Music" and "Guitar" into a single text response:
+After adding a second service, we combined both messages from the Music and Guitar services into a single text response:
 ```C#
 var output = $"{musicMessage} \n {guitarMessage}";
 return Content(output);
 ```
 
-Now we will modify it return a view. By convention, ASP.NET Core will automatically look for:
+Now we will modify it to return a View.. By convention, ASP.NET Core will automatically look for:
 ```bash
     Views\Music\Index.cshtml
 ```
+So when the controller returns **"View()"** from the **"Index()""** action, ASP.NET Core MVC follows the default view discovery convention and looks for: **"Views/Music/Index.cshtml"**
 
 We then create a new Razor View named Index.cshtml, add some basic content, and update it to display the data received from the controller. Please review the code and comments in that file. Also we can test our application to see the view page "index.cshtml" is loading.
 
@@ -461,10 +504,10 @@ In order to pass data to a View, ASP.NET Core MVC provides several ways:
 - ViewBag
 - Strongly Typed View Models (recommended by Microsoft for real applications)
 
-In order to order to clearly understand the why "ViewModels" exist, we can demonstrate the three of them in our current project (repo) according to the following order:
+In order to clearly understand why "ViewModels" exist, we can demonstrate the three approaches in our current project (repo) according to the following order:
 1. ViewData (very simple, built into MVC)
 2. ViewBag (shows another common approach)
-3. Strongly Typed ViewModel (the professional approach used in production)
+3. Strongly Typed View Models (the recommended approach for most real-world MVC applications)
 
 Our final return code line in the controller was:
 ```C#
@@ -483,7 +526,7 @@ return View();
 - The controller does not generate HTML
 - The controller prepares the data
 - The View is responsible for generating the HTML displayed in the browser
-
+- The Razor View is responsible for generating the HTML displayed in the browser
 
 
 ---
